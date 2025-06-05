@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 import { DataSource } from 'typeorm';
 import { CompanyRepository } from './company.repository';
 

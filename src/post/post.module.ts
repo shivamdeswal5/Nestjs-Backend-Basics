@@ -4,7 +4,7 @@ import { PostController } from './post.controller';
 import { PostRepository } from './post.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 import { DataSource } from 'typeorm';
 
 @Module({

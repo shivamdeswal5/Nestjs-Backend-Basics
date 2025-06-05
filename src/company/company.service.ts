@@ -6,16 +6,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { CompanyDto } from './dto/company.dto';
+import { UserRepository } from '../user/user.repository';
+import { CompanyRepository } from './company.repository';
 
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
+    private readonly companyRepository: CompanyRepository,
   ) {}
 
   async create(data: Omit<CompanyDto, 'userIds'>, userIds: number[]) {
