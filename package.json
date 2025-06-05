@@ -20,12 +20,13 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:create2": "npm run typeorm migration:create",
     "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli -f ./src/database/migrations/migration",
-     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate -d ./src/database/data-source.ts ./src/database/migrations/migration",
     "migration:create": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create -d ./src/database/data-source.ts  ./src/database/migrations/migration",
     "migration:run": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/database/data-source.ts ",
     "migration:revert": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d ./src/database/data-source.ts ",
-    "seed": "ts-node -r tsconfig-paths/register ./src/seeds/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register ./src/seeds/seed.ts",
+    "db:drop": "npm typeorm schema:drop"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
@@ -37,6 +38,8 @@
     "@nestjs/typeorm": "^11.0.0",
     "bcrypt": "^6.0.0",
     "class-validator": "^0.14.2",
+    "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

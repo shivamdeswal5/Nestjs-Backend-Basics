@@ -13,6 +13,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -23,8 +24,11 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    // return this.userService.create(createUserDto);
+    const user = await this.userService.create(createUserDto);
+    return this.userService.buildUserResponse(user);
+
   }
   @Get()
   findAll(

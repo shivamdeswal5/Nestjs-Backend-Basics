@@ -29,7 +29,7 @@ export class CompanyController {
 
  @Patch('/adduser/:id')
  addUserToCompany(@Param('id', ParseIntPipe) id: number,@Body() userData:CreateUserDto){
-  this.companyService.addUserToCompany(id,userData);
+  return this.companyService.addUserToCompany(id,userData);
  }
 
   @Get()
@@ -42,6 +42,10 @@ export class CompanyController {
     return this.companyService.findOne(id);
   }
 
+  @Post(':companyId/:userId')
+  addExistingUserToCompany(@Param('companyId', ParseIntPipe) companyId: number,@Param('userId', ParseIntPipe) userId: number){
+    return this.companyService.addExistingUserToCompany(companyId,userId);
+  }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

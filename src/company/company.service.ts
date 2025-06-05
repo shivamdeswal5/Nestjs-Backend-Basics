@@ -6,7 +6,7 @@ import {
 import { CompanyDto } from './dto/company.dto';
 import { UserRepository } from '../user/user.repository';
 import { CompanyRepository } from './company.repository';
-import { DataSource, In, QueryRunner } from 'typeorm';
+import { DataSource, In, Not, QueryRunner } from 'typeorm';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { Company } from './entities/company.entity';
 
@@ -104,6 +104,26 @@ export class CompanyService {
     }finally{
       await queryRunner.release();      
     }
+  }
+
+  async addExistingUserToCompany(companyId:number,userId:number){
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if(!user){
+      throw new NotFoundException(`User with userId: ${userId} not found`);
+    }
+    const company = await this.companyRepository.findOne({
+      where: { id:companyId },
+      relations: ['users']
+    })
+
+    if(!company){
+      throw new NotFoundException(`Company with companyId: ${companyId} not found`);
+    }
+    
+    company.users.push(user);
+    await this.companyRepository.save(company);
+    return company;
   }
 
   async remove(id: number) {

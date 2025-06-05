@@ -4,14 +4,53 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ILike } from 'typeorm';
+import {config} from 'dotenv';
+import {sign} from 'jsonwebtoken';
+
+config();
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const userByEmail = await this.userRepository.findOne({
+      where: {email : createUserDto.email},
+    });
+    
+    const userByUsername = await this.userRepository.findOne({
+      where:{username:createUserDto.username},
+    })
+    if(userByEmail){
+      console.log("Email is already registered...")
+      throw new Error("User Already Exists .."); 
+    }
+    if(userByUsername){
+      console.log("username is already taken");
+      throw new Error("Username already exits");
+    }
     const user = this.userRepository.create(createUserDto);
     return this.userRepository.save(user);
+  }
+
+  buildUserResponse(user: User) {
+    return { user: { ...user, token: this.generateJwtToken(user) } };
+  }
+
+  generateJwtToken(user:User){
+    console.log("secret: ",process.env.JWT_SECRET);
+    return sign(
+      {
+        id:user.id,
+        email: user.email,
+        gender: user.gender,
+        age:user.age,
+        username: user.username,
+      },
+      process.env.JWT_SECRET,
+      {expiresIn: '7d'}
+    )
+    
   }
 
 //   async findAll(): Promise<User[]> {
