@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CompanyDto } from './dto/company.dto';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('companies')
 export class CompanyController {
@@ -20,6 +21,16 @@ export class CompanyController {
   const { userIds = [], ...companyData } = companyDto;  
   return this.companyService.create(companyData, userIds);
 }
+
+ @Patch(':id')
+ update(@Body() companyDto: CompanyDto,@Param('id', ParseIntPipe) id: number){
+  return this.companyService.update(id,companyDto);
+ }
+
+ @Patch('/adduser/:id')
+ addUserToCompany(@Param('id', ParseIntPipe) id: number,@Body() userData:CreateUserDto){
+  this.companyService.addUserToCompany(id,userData);
+ }
 
   @Get()
   findAll() {

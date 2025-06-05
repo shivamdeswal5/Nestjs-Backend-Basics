@@ -18,9 +18,12 @@ export class UserService {
 //     return this.userRepository.find();
 //   }
 
+ async findAllWithRelation(){
+  return this.userRepository.find({ relations: ['posts','companies'] });
+ }
+
   async findAll(page = 1, limit = 10, search?: string) {
     const skip = (page - 1) * limit;
-
     const where = search
       ? [
           { name: ILike(`%${search}%`) },

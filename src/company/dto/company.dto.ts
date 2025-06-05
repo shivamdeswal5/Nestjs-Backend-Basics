@@ -24,7 +24,7 @@ export class CompanyDto {
   @IsEmail({}, { message: 'Please provide valid Email.' })
   email: string;
 
-   @IsOptional()
+  @IsOptional()
   @IsArray()
   @ArrayNotEmpty()
   @ArrayUnique()
