@@ -36,6 +36,7 @@ export class UserService {
   }
 
   buildUserResponse(user: User) {
+    user.password = ''; 
     return { user: { ...user, token: this.generateJwtToken(user) } };
   }
 

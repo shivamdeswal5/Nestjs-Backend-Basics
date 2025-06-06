@@ -9,6 +9,7 @@ import { CompanyRepository } from './company.repository';
 import { DataSource, In, Not, QueryRunner } from 'typeorm';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { Company } from './entities/company.entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 
 @Injectable()
@@ -36,10 +37,14 @@ export class CompanyService {
 
   findAll() {
     return this.companyRepository.createQueryBuilder('company')
-      .leftJoinAndSelect('company.users', 'users')
-      .getMany();
-    // return this.companyRepository.find({ relations: ['users'] });
+      .innerJoinAndSelect('company.users', 'users')
+      .take(10)
+      .getManyAndCount();
   }
+
+  // findAll(){
+  //   return this.companyRepository.find({ relations: ['users'] });
+  // }
 
   async findOne(id: number) {
     const company = await this.companyRepository.findOne({
@@ -54,6 +59,7 @@ export class CompanyService {
     return company;
   }
 
+  @Transactional()
   async update(id: number, data: CompanyDto) {
     
     const { userIds, ...restData } = data;
