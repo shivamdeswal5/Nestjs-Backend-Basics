@@ -21,6 +21,7 @@ import { CompanyModule } from './company/company.module';
         entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
         synchronize: false,
         autoLoadEntities: true,
+        logging:true
       }),
     }),
     UserModule,

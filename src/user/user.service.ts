@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,6 +6,8 @@ import { User } from './entities/user.entity';
 import { ILike } from 'typeorm';
 import {config} from 'dotenv';
 import {sign} from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login-dto';
 
 config();
 
@@ -95,6 +97,27 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
+    if (!user) {
+      throw new HttpException(`User with id ${id} not found`,400);
+    }
+    const userByEmail = await this.userRepository.findOne({
+      where: {email : updateUserDto.email},
+    });
+    const userByUsername = await this.userRepository.findOne({
+      where:{username:updateUserDto.username},
+    })
+
+    if(userByEmail && userByEmail.id !== id){
+      console.log("Email is already registered...")
+      throw new HttpException("User Already Exists ..",400); 
+    }
+    if(userByUsername && userByUsername.id !== id){
+      console.log("username is already taken");
+      throw new HttpException("Username already exits",400);
+    }
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
     Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
   }
@@ -102,5 +125,21 @@ export class UserService {
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id);
     await this.userRepository.remove(user);
+  }
+
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new HttpException('User not found',400);
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid email or password', 401);
+    }
+    return this.buildUserResponse(user);
   }
 }

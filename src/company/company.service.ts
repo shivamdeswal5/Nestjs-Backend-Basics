@@ -10,6 +10,7 @@ import { DataSource, In, Not, QueryRunner } from 'typeorm';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { Company } from './entities/company.entity';
 
+
 @Injectable()
 export class CompanyService {
   constructor(
@@ -34,7 +35,10 @@ export class CompanyService {
   }
 
   findAll() {
-    return this.companyRepository.find({ relations: ['users'] });
+    return this.companyRepository.createQueryBuilder('company')
+      .leftJoinAndSelect('company.users', 'users')
+      .getMany();
+    // return this.companyRepository.find({ relations: ['users'] });
   }
 
   async findOne(id: number) {
@@ -51,6 +55,7 @@ export class CompanyService {
   }
 
   async update(id: number, data: CompanyDto) {
+    
     const { userIds, ...restData } = data;
     const company = await this.companyRepository.findOne({
       where: { id },
@@ -99,7 +104,7 @@ export class CompanyService {
       // console.log("Returning Company: ",company);
       return company;
     }catch(e){
-      await queryRunner.commitTransaction();
+      await queryRunner.rollbackTransaction();
       throw e;
     }finally{
       await queryRunner.release();      
